@@ -1,10 +1,11 @@
 #https://github.com/ksvc/FFmpeg/wiki/hevcpush
 #https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu
-FROM gcc:9.4.0-buster
+FROM ubuntu:18.04
 
-RUN apt update -qq
-
-RUN apt install -y \
+RUN sed -i s/archive.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list && \
+    sed -i s/security.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list && \
+    apt update -y && \
+    apt install -y \
     autoconf \
     automake \
     build-essential \
@@ -27,23 +28,19 @@ RUN apt install -y \
     texinfo \
     wget \
     yasm \
-    zlib1g-dev
+    zlib1g-dev \
+    nasm \
+    libx264-dev \
+    libx265-dev libnuma-dev \
+    libvpx-dev \
+    libfdk-aac-dev \
+    libmp3lame-dev \
+    libopus-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN apt install -y --fix-missing nasm
-RUN mkdir -p ~/ffmpeg_sources ~/bin
-
-WORKDIR /root/ffmpeg_sources
-
-RUN git clone --depth=1 -b release/3.4 https://github.com/ksvc/FFmpeg.git ffmpeg
-
-RUN apt install -y --fix-missing libx265-dev libnuma-dev libvpx-dev libmp3lame-dev libopus-dev
-
-RUN cd ~/ffmpeg_sources && \
-    git -C x264 pull 2> /dev/null || git clone --depth 1 https://code.videolan.org/videolan/x264.git && \
-    cd x264 && \
-    PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" --enable-static --enable-pic && \
-    PATH="$HOME/bin:$PATH" make && \
-    make install
+RUN mkdir -p ~/ffmpeg_sources ~/bin && \
+    cd ~/ffmpeg_sources && \
+    git clone --depth=1 -b release/3.4 https://github.com/ksvc/FFmpeg.git ffmpeg
 
 RUN cd ~/ffmpeg_sources && \
     cd ffmpeg && \
@@ -56,7 +53,7 @@ RUN cd ~/ffmpeg_sources && \
     --ld="g++" \
     --bindir="$HOME/bin" \
     --enable-static --enable-pic \
-    --disable-encoders --enable-encoder=aac --enable-encoder=libx264 --enable-gpl --enable-libx264 --enable-encoder=libx265  --enable-libx265 \
+    --disable-encoders --enable-encoder=aac --enable-encoder=libx264 --enable-gpl --enable-libx264 --enable-encoder=libx265 --enable-libx265 \
     --disable-decoders --enable-decoder=aac --enable-decoder=h264 --enable-decoder=hevc  \
     --disable-demuxers --enable-demuxer=aac --enable-demuxer=mov --enable-demuxer=mpegts --enable-demuxer=flv --enable-demuxer=h264 --enable-demuxer=hevc --enable-demuxer=hls  \
     --disable-muxers --enable-muxer=h264  --enable-muxer=flv --enable-muxer=f4v  --enable-muxer=mp4 \
@@ -65,3 +62,7 @@ RUN cd ~/ffmpeg_sources && \
     make install && \
     hash -r
 
+WORKDIR /root/bin
+
+# CMD           ["--help"]
+# ENTRYPOINT    ["ffmpeg"]

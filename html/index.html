@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyWasmPlayer</title>
+    <script src="./EasyWasmPlayer.js"></script>
+</head>
+
+<body>
+    <h4 style="width:600px;margin: auto;">H265播放器</h4>
+    <br>
+    <div style="width:600px;height: 400px; background-color:pink;margin: auto;">
+        <div id="newplay" onClick="onplay"></div>
+        <input type="text" id="value" value="http://127.0.0.1:8080/live/test.flv"
+            style="width: 80%;box-sizing: border-box;">
+        <button id="btn" style="width: 18%;box-sizing: border-box;">播放</button>
+    </div>
+    <script>
+        callbackfun = function (e) {
+            console.log(e);
+        }
+        var player;
+        function play() {
+            if (player) {
+                player.destroy();
+            }
+            player = new WasmPlayer(null, 'newplay', callbackfun, {
+                Height: true
+            });
+            var url = document.getElementById('value').value;
+            player.play(url, 1);
+        }
+        btn.onclick = function () {
+            play();
+        }
+        play();
+    </script>
+</body>
+
+</html>
