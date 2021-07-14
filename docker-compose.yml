@@ -13,8 +13,10 @@ services:
         image: 76527413/ffmpeg:amd64
         volumes:
             - ./test.mp4:/root/bin/test.mp4
+            - ./tmp:/tmp
         #command: ./ffmpeg -y -re -stream_loop -1 -i test.mp4 -c:a copy -c:v libx265 -f flv rtmp://srs/live/test
-        command: ./ffmpeg -y -re -stream_loop -1 -i test.mp4 -c:a copy -c:v copy -f flv rtmp://srs/live/test
+        #command: ./ffmpeg -y -re -stream_loop -1 -i test.mp4 -c:a copy -c:v copy -f flv rtmp://srs/live/test
+        command: tail -f /dev/null
         depends_on:
             - srs
     ffmpeg-h264:
@@ -32,3 +34,8 @@ services:
             - ./html:/usr/share/nginx/html
         depends_on:
             - ffmpeg
+    # test:
+    #     image: ubuntu:18.04
+    #     volumes:
+    #         - ./tmp:/tmp
+    #     command: tail -f /dev/null

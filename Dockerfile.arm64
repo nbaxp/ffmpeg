@@ -1,7 +1,7 @@
-#https://github.com/ksvc/FFmpeg/wiki/hevcpush
-#https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu
-FROM arm64v8/ubuntu:18.04
-
+ARG BUILD_IMAGE=arm64v8/ubuntu:18.04
+ARG IMAGE=arm64v8/ubuntu:18.04
+FROM $BUILD_IMAGE as build
+ARG BRANCH=release/4.1
 RUN sed -i s/ports.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list && \
     apt update -y && \
     apt install -y \
@@ -39,7 +39,9 @@ RUN sed -i s/ports.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list && \
 
 RUN mkdir -p ~/ffmpeg_sources ~/bin && \
     cd ~/ffmpeg_sources && \
-    git clone --depth=1 -b release/3.4 https://github.com/ksvc/FFmpeg.git ffmpeg
+    git clone --depth=1 -b $BRANCH https://github.com/FFmpeg/FFmpeg.git ffmpeg
+
+COPY ffmpeg/libavformat  /root/ffmpeg_sources/ffmpeg/libavformat
 
 RUN cd ~/ffmpeg_sources && \
     cd ffmpeg && \
@@ -65,3 +67,19 @@ WORKDIR /root/bin
 
 # CMD           ["--help"]
 # ENTRYPOINT    ["ffmpeg"]
+
+FROM $IMAGE
+
+LABEL org.opencontainers.image.authors="76527413@qq.com"
+
+WORKDIR /root/bin
+
+COPY --from=build /root/bin .
+
+RUN sed -i s/archive.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list && \
+    sed -i s/security.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list && \
+    apt update -y && \
+    apt install -y libxcb1-dev && \
+    rm -rf /var/lib/apt/lists/*
+    
+RUN ./ffmpeg
