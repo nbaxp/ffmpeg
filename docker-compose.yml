@@ -1,3 +1,5 @@
+#https://github.com/tsingsee/EasyPlayer.js http://127.0.0.1:8080/live/h265.flv
+#https://github.com/ksvc/h265webplayer 
 version: "3.8"
 services:
     srs:
@@ -9,18 +11,18 @@ services:
             - 8080:8080
             - 1985:1985
             - 8000:8000/udp
-    ffmpeg-265:
-        image: 76527413/ffmpeg:amd64
-        volumes:
-            - ./test.mp4:/test.mp4
-        command: ffmpeg -y -re -stream_loop -1 -i test.mp4 -c:a copy -c:v libx265 -f flv rtmp://srs/live/h265
-        depends_on:
-            - srs
     ffmpeg-h264:
         image: 76527413/ffmpeg:amd64
         volumes:
-            - ./test.mp4:/test.mp4
+            - ./h264.mp4:/test.mp4
         command: ffmpeg -y -re -stream_loop -1 -i test.mp4 -c:a copy -c:v copy -f flv rtmp://srs/live/h264
+        depends_on:
+            - srs
+    ffmpeg-265: 
+        image: 76527413/ffmpeg:amd64
+        volumes:
+            - ./h265.mp4:/test.mp4
+        command: ffmpeg -y -re -stream_loop -1 -i test.mp4 -c:a copy -c:v copy -f flv rtmp://srs/live/h265
         depends_on:
             - srs
     nginx:

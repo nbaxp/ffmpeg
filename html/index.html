@@ -9,33 +9,57 @@
 </head>
 
 <body>
-    <h4 style="width:600px;margin: auto;">H265播放器</h4>
-    <br>
-    <div style="width:600px;height: 400px; background-color:pink;margin: auto;">
-        <div id="newplay" onClick="onplay"></div>
-        <input type="text" id="value" value="http://127.0.0.1:8080/live/h265.flv"
-            style="width: 80%;box-sizing: border-box;">
-        <button id="btn" style="width: 18%;box-sizing: border-box;">播放</button>
+    <div style="text-align: center;">
+        <div style="width:540px;height: 1170px; background-color:pink;margin: auto;display: inline-block;">
+            <div id="newplay1" onClick="onplay"></div>
+            <input type="text" id="value1" value="http://127.0.0.1:8080/live/h264.flv"
+                style="width: 80%;box-sizing: border-box;">
+            <button id="btn1" style="width: 18%;box-sizing: border-box;">播放</button>
+        </div>
+        <div style="width:540px;height: 1170px; background-color:pink;margin: auto;display: inline-block;">
+            <div id="newplay2" onClick="onplay"></div>
+            <input type="text" id="value2" value="http://127.0.0.1:8080/live/h265.flv"
+                style="width: 80%;box-sizing: border-box;">
+            <button id="btn2" style="width: 18%;box-sizing: border-box;">播放</button>
+        </div>
     </div>
+
     <script>
+        document.getElementById('value1').value=location.protocol + "//" +location.host + ":8080" +"/live/h264.flv";
+        document.getElementById('value2').value=location.protocol + "//" +location.host + ":8080" +"/live/h265.flv";
         callbackfun = function (e) {
             //console.log(e);
         }
-        var player;
-        function play() {
-            if (player) {
-                player.destroy();
+        var player1;
+        var player2;
+        function play1() {
+            if (player1) {
+                player1.destroy();
             }
-            player = new WasmPlayer(null, 'newplay', callbackfun, {
+            player1 = new WasmPlayer(null, 'newplay1', callbackfun, {
                 Height: true
             });
-            var url = document.getElementById('value').value;
-            player.play(url, 1);
+            var url = document.getElementById('value1').value;
+            player1.play(url, 1);
         }
-        btn.onclick = function () {
-            play();
+        btn1.onclick = function () {
+            play1();
         }
-        play();
+        function play2() {
+            if (player2) {
+                player2.destroy();
+            }
+            player2 = new WasmPlayer(null, 'newplay2', callbackfun, {
+                Height: true
+            });
+            var url = document.getElementById('value2').value;
+            player2.play(url, 1);
+        }
+        btn2.onclick = function () {
+            play2();
+        }
+        play1();
+        play2();
     </script>
 </body>
 
