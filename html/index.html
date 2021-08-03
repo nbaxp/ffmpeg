@@ -4,37 +4,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EasyWasmPlayer</title>
-    <script src="./EasyWasmPlayer.js"></script>
+    <title>h264/h265 web player</title>
+    <style>
+        .container {
+            text-align: center;
+        }
+
+        .container>div {
+            display: inline-block;
+            width: 540px;
+        }
+
+        .container .player-box {
+            width: 100%;
+            height: 1170px;
+            margin: auto;
+            display: inline-block;
+            overflow: hidden;
+            background-color: pink;
+            padding-bottom: -60px;
+        }
+
+        canvas {
+            width: 540px;
+            height: 1170px;
+        }
+
+        .container input {
+            width: 80%;
+            box-sizing: border-box;
+        }
+
+        .container button {
+            width: 15%;
+            box-sizing: border-box;
+        }
+    </style>
 </head>
 
 <body>
-    <div style="text-align: center;">
-        <div style="width:540px;height: 1170px; background-color:pink;margin: auto;display: inline-block;">
-            <div id="newplay1" onClick="onplay"></div>
-            <input type="text" id="value1" value="http://127.0.0.1:8080/live/h264.flv"
-                style="width: 80%;box-sizing: border-box;">
-            <button id="btn1" style="width: 18%;box-sizing: border-box;">播放</button>
+    <div class="container">
+        <div>
+            <div id="newplay1"></div>
+            <input type="text" id="value1" value="/live/h264.flv">
+            <button id="btn1">播放</button>
         </div>
-        <div style="width:540px;height: 1170px; background-color:pink;margin: auto;display: inline-block;">
-            <div id="newplay2" onClick="onplay"></div>
-            <input type="text" id="value2" value="http://127.0.0.1:8080/live/h265.flv"
-                style="width: 80%;box-sizing: border-box;">
-            <button id="btn2" style="width: 18%;box-sizing: border-box;">播放</button>
+        <div>
+            <div id="newplay2"></div>
+            <input type="text" id="value2" value="/live/h265.flv">
+            <button id="btn2">播放</button>
+        </div>
+        <div>
+            <canvas id="canvas" width="1080" height="2344"></canvas>
+            <input type="text" id="value3" value="/live/h265.flv">
+            <button id="btn3">播放</button>
         </div>
     </div>
-
+    <script src="/lib/EasyWasmPlayer/EasyWasmPlayer.js"></script>
     <script>
-        document.getElementById('value1').value=location.protocol + "//" +location.host + ":8080" +"/live/h264.flv";
-        document.getElementById('value2').value=location.protocol + "//" +location.host + ":8080" +"/live/h265.flv";
+        document.getElementById('value1').value = location.protocol + "//" + location.host + "/live/h264.flv";
+        document.getElementById('value2').value = location.protocol + "//" + location.host + "/live/h265.flv";
+        document.getElementById('value3').value = location.protocol + "//" + location.host + "/live/h265.flv";
         callbackfun = function (e) {
             //console.log(e);
         }
         var player1;
         var player2;
+        var player3;
+    </script>
+    <script>
         function play1() {
             if (player1) {
                 player1.destroy();
+                player1 = null;
             }
             player1 = new WasmPlayer(null, 'newplay1', callbackfun, {
                 Height: true
@@ -45,9 +87,15 @@
         btn1.onclick = function () {
             play1();
         }
+        setTimeout(() => {
+            play1();
+        }, 0);
+    </script>
+    <script>
         function play2() {
             if (player2) {
                 player2.destroy();
+                player2 = null;
             }
             player2 = new WasmPlayer(null, 'newplay2', callbackfun, {
                 Height: true
@@ -58,8 +106,48 @@
         btn2.onclick = function () {
             play2();
         }
-        play1();
-        play2();
+        setTimeout(() => {
+            play2();
+        }, 0);
+    </script>
+    <script src="lib/WXInlinePlayer/index.js"></script>
+    <script>
+        function play3() {
+            if (player3 != null) {
+                player3.stop();
+                player3.destroy();
+                player3 = null;
+            }
+            var videoElement = document.getElementById('canvas');
+            var url = document.getElementById('value3').value;
+            player3 = new WXInlinePlayer(options);
+            player3.play();
+        }
+        var options = {
+            asmUrl: "lib/WXInlinePlayer/prod.h265.asm.combine.js",
+            wasmUrl: "lib/WXInlinePlayer/prod.h265.wasm.combine.js",
+            url: document.getElementById('value3').value,
+            $container: document.getElementById('canvas'),
+            hasVideo: true,
+            hasAudio: false,
+            volume: 0.5,
+            muted: true,
+            autoplay: true,
+            loop: false,
+            isLive: true,
+            chunkSize: 128 * 1024,
+            preloadTime: 5e2,
+            bufferingTime: 1e3,
+            cacheSegmentCount: 64,
+            customLoader: null
+        };
+
+        btn3.onclick = function () {
+            WXInlinePlayer.ready(options).then((player) => {
+                player3 = player;
+                player.play();
+            });
+        }
     </script>
 </body>
 
