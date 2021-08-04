@@ -1,6 +1,6 @@
 FROM ubuntu:18.04 as build
 ARG BRANCH=release/4.1
-ARG COMPILE_PACKAGES="autoconf automake build-essential cmake git-core libass-dev libfreetype6-dev libgnutls28-dev libtool libvorbis-dev meson ninja-build pkg-config texinfo wget yasm zlib1g-dev nasm checkinstall"
+ARG COMPILE_PACKAGES="autoconf automake build-essential cmake git-core libass-dev libfreetype-dev libgnutls28-dev libtool libvorbis-dev meson ninja-build pkg-config texinfo wget yasm zlib1g-dev nasm checkinstall"
 COPY ffmpeg/libavformat  /ffmpeg/libavformat
 RUN if uname -a | grep -q 'azure'; then echo azure ;else \
     sed -i s/archive.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list && \
@@ -56,7 +56,7 @@ RUN if uname -a | grep -q 'azure'; then echo azure ;else \
     libx264-dev \
     libx265-dev libnuma-dev \
     libfdk-aac-dev && \
-    libfreetype6-dev && \
+    libfreetype-dev && \
     rm -rf /var/lib/apt/lists/* && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/libc.conf
 
