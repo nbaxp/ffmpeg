@@ -2,10 +2,11 @@ FROM ubuntu:18.04 as build
 ARG BRANCH=release/4.1
 ARG COMPILE_PACKAGES="autoconf automake build-essential cmake git-core libass-dev libfreetype6-dev libgnutls28-dev libtool libvorbis-dev meson ninja-build pkg-config texinfo wget yasm zlib1g-dev nasm checkinstall"
 COPY ffmpeg/libavformat  /ffmpeg/libavformat
-RUN cat /etc/apt/sources.list && \
+RUN if uname -a | grep -q 'azure'; then echo azure ;else \
     sed -i s/archive.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list && \
     sed -i s/security.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list && \
-    sed -i s/ports.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list && \
+    sed -i s/ports.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list ; \
+    fi && \
     apt update -y && \
     apt install -y $COMPILE_PACKAGES && \
     apt install -y \
@@ -45,10 +46,11 @@ LABEL org.opencontainers.image.authors="76527413@qq.com"
 
 COPY --from=build /usr/local/bin/ffmpeg /usr/local/bin
 
-RUN cat /etc/apt/sources.list && \
+RUN if uname -a | grep -q 'azure'; then echo azure ;else \
     sed -i s/archive.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list && \
     sed -i s/security.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list && \
-    sed -i s/ports.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list && \
+    sed -i s/ports.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list ; \
+    fi && \
     apt update -y && \
     apt install -y \
     libx264-dev \
