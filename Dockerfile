@@ -56,6 +56,7 @@ RUN if uname -a | grep -q 'azure'; then echo azure ;else \
     libx264-dev \
     libx265-dev libnuma-dev \
     libfdk-aac-dev && \
+    libfreetype6-dev && \
     rm -rf /var/lib/apt/lists/* && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/libc.conf
 
