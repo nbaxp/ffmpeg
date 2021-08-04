@@ -20,6 +20,7 @@ RUN mkdir -p ~/ffmpeg_sources ~/bin && \
     git clone --depth=1 -b $BRANCH https://github.com/FFmpeg/FFmpeg.git ffmpeg && \
     /bin/cp -rf /ffmpeg/libavformat/*  /root/ffmpeg_sources/ffmpeg/libavformat && \
     rm -rf /ffmpeg/libavformat
+
 RUN cd ~/ffmpeg_sources && \
     cd ffmpeg && \
     PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
@@ -53,14 +54,6 @@ RUN if uname -a | grep -q 'azure'; then echo azure ;else \
     sed -i s/ports.ubuntu.com/mirrors.ustc.edu.cn/g /etc/apt/sources.list ; \
     fi && \
     apt update -y && \
-    apt install -y \
-    libx264-dev \
-    libx265-dev libnuma-dev \
-    libfdk-aac-dev && \
-    libfreetype6-dev && \
+    apt install -y libx264-dev libx265-dev libnuma-dev libfdk-aac-dev libfreetype6-dev && \
     rm -rf /var/lib/apt/lists/* && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/libc.conf
-
-#https://github.com/ksvc/FFmpeg/wiki/hevcpush
-#https://github.com/runner365/ffmpeg_rtmp_h265
-#https://trac.ffmpeg.org/wiki/CompilationGuide/Ubuntu
