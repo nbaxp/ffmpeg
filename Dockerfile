@@ -14,13 +14,14 @@ RUN #if uname -a | grep -q 'azure'; then echo azure ;else \
     libx264-dev \
     libx265-dev libnuma-dev \
     libfdk-aac-dev && \
-    rm -rf /var/lib/apt/lists/* && \
-    mkdir -p ~/ffmpeg_sources ~/bin && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p ~/ffmpeg_sources ~/bin && \
     cd ~/ffmpeg_sources && \
     git clone --depth=1 -b $BRANCH https://github.com/FFmpeg/FFmpeg.git ffmpeg && \
     /bin/cp -rf /ffmpeg/libavformat/*  /root/ffmpeg_sources/ffmpeg/libavformat && \
-    rm -rf /ffmpeg/libavformat &&\
-    cd ~/ffmpeg_sources && \
+    rm -rf /ffmpeg/libavformat
+RUN cd ~/ffmpeg_sources && \
     cd ffmpeg && \
     PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
     --prefix="$HOME/ffmpeg_build" \
